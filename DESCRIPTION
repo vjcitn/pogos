@@ -1,0 +1,14 @@
+Package: RxGeno
+Title: simple utilities for querying bhklab PharmacoDB
+Description: Provide simple utilities for querying bhklab PharmacoDB and modeling API outputs.
+Version: 0.0.1
+Author: Vince Carey <stvjc@channing.harvard.edu>
+Suggests: knitr, ontoProc, DT
+Imports: S4Vectors
+Depends: R (>= 3.4.0), rjson (>= 0.2.15), httr (>= 1.3.1)
+Maintainer: VJ Carey <stvjc@channing.harvard.edu>
+License: Artistic-2.0
+LazyLoad: yes
+biocViews: variants
+RoxygenNote: 6.0.1.9000
+VignetteBuilder: knitr

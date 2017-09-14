@@ -1,0 +1,89 @@
+---
+title: "RxGeno -- simple interface to bhklab PharmacoDB with emphasis on ontology"
+author: "Vincent J. Carey, stvjc at channing.harvard.edu"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{RxGeno -- simple interface to bhklab PharmacoDB with emphasis on ontology}
+  %\VignetteEncoding{UTF-8}
+output:
+  BiocStyle::html_document:
+    highlight: pygments
+    number_sections: yes
+    theme: united
+    toc: yes
+---
+
+# Introduction
+
+bhklab's PharmacoDB unites multiple drug sensitivity database.
+A REST API is available and interfaces to some basic endpoints are
+provided in this package.  We also provide some basic
+support for working with the Cell Line Ontology.
+
+```{r setup,echo=FALSE}
+suppressMessages({
+suppressPackageStartupMessages({
+library(RxGeno)
+library(S4Vectors)
+library(DT)
+})
+})
+```
+
+# Some stored reference data
+
+We precomputed tables for cell lines, compounds, and tissues.
+These are available as DataFrame instances as
+`cell_lines_v1`, `compounds_v1`, and `tissues_v1`, in
+the data element of the package.
+
+Numerical ids are defined by the PharmacoDB.
+
+## Cell lines
+```{r lkk, echo=FALSE}
+data(cell_lines_v1)
+datatable(as.data.frame(cell_lines_v1), options=list(lengthMenu=c(3,5,10,50,100)))
+```
+
+## Compounds
+```{r lkccc, echo=FALSE}
+data(compounds_v1)
+datatable(as.data.frame(compounds_v1), 
+   options=list(lengthMenu=c(3,5,10,50,100)))
+```
+
+# Bridging to Cell Line Ontology
+
+The following identifiers are available in the PharmacoDB cell lines:
+```
+c("143B", "1321N1", "184B5")
+```
+What are they?  What organs do they represent?  One way
+to proceed is through parent terms in Cell Line Ontology.
+```{r lkoo}
+library(ontoProc)
+clo = getCellLineOnto()
+minds = which(clo$name %in% c("143B cell", "1321N1 cell", "184B5 cell"))
+tags = clo$id[minds]
+clo$name[ unlist(clo$parent[tags]) ]
+```
+Now: how can we connect the anatomic vocabulary in these terms
+to formal anatomical terms in UBERON or CARO?
+
+# Bridging to ChEBI lite
+
+This will involve more work.  We have the compounds in PharmacoDB.
+How many match the compound names in Chebi lite?
+```{r lkcom}
+chl = getChebiLite()
+allch = chl$name
+mm = allch[match(compounds_v1[,2], allch, nomatch=0)]
+round(length(mm)/nrow(compounds_v1),2) # not high
+datatable(data.frame(id=names(mm), comp=as.character(mm)))
+```
+
+We will have to use the full ChEBI because compounds like 17-AAG
+have synonyms that _are_ annotated (tanespimycin in this case).
+
+
