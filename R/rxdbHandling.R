@@ -1,4 +1,5 @@
 #' enumerate top level endpoint terms for bhklab PharmacoDB API
+#' @return a character vector of available endpoints
 #' @examples 
 #' topEndpoints_v1()
 #' @export
@@ -25,6 +26,7 @@ basicDecoder = function(x)
 #' @param url of a PharmacoDB server API target
 #' @param \dots typically a string representing an API endpoint, will be processed by unlist() and then to paste0 preceded by \code{url}
 #' @param decoder a function of one argument that will be applied to API response (typically JSON)
+#' @return typically a list, dependent on decoder parameter
 #' @examples
 #' qout = rxdbQuery_v1("cell_lines") # yields 30; append "?all=true" to retrieve all
 #' sapply(qout, function(x) x[[2]])

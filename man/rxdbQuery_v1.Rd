@@ -14,6 +14,9 @@ rxdbQuery_v1(..., url = "https://api.pharmacodb.com/v1/",
 
 \item{decoder}{a function of one argument that will be applied to API response (typically JSON)}
 }
+\value{
+typically a list, dependent on decoder parameter
+}
 \description{
 very simple query formulation, build queries using endpoints of bhklab PharmacoDB API
 }

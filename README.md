@@ -1,1 +1,1 @@
-vignettes/RxGeno.Rmd
+vignettes/pogos.Rmd

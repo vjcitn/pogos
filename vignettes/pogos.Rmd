@@ -1,10 +1,10 @@
 ---
-title: "RxGeno -- simple interface to bhklab PharmacoDB with emphasis on ontology"
+title: "pogos -- PharmacOGenomics Ontology Support"
 author: "Vincent J. Carey, stvjc at channing.harvard.edu"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{RxGeno -- simple interface to bhklab PharmacoDB with emphasis on ontology}
+  %\VignetteIndexEntry{pogos -- simple interface to bhklab PharmacoDB with emphasis on ontology}
   %\VignetteEncoding{UTF-8}
 output:
   BiocStyle::html_document:
@@ -16,15 +16,15 @@ output:
 
 # Introduction
 
-bhklab's PharmacoDB unites multiple drug sensitivity database.
+bhklab's PharmacoDB unites multiple drug sensitivity databases.
 A REST API is available and interfaces to some basic endpoints are
 provided in this package.  We also provide some basic
-support for working with the Cell Line Ontology.
+support for working with the Cell Line Ontology and ChEBI.
 
 ```{r setup,echo=FALSE}
 suppressMessages({
 suppressPackageStartupMessages({
-library(RxGeno)
+library(pogos)
 library(S4Vectors)
 library(DT)
 })
@@ -71,19 +71,34 @@ clo$name[ unlist(clo$parent[tags]) ]
 Now: how can we connect the anatomic vocabulary in these terms
 to formal anatomical terms in UBERON or CARO?
 
-# Bridging to ChEBI lite
+# Bridging to ChEBI
 
 This will involve more work.  We have the compounds in PharmacoDB.
-How many match the compound names in Chebi lite?
+How many match the compound names in Chebi? 
 ```{r lkcom}
-chl = getChebiLite()
+chl = getChebiOnto()
 allch = chl$name
 mm = allch[match(compounds_v1[,2], allch, nomatch=0)]
 round(length(mm)/nrow(compounds_v1),2) # not high
 datatable(data.frame(id=names(mm), comp=as.character(mm)))
 ```
 
-We will have to use the full ChEBI because compounds like 17-AAG
-have synonyms that _are_ annotated (tanespimycin in this case).
+Direct matches are relatively rare.  We also search the
+synonym data in ChEBI
 
+```{r srchsym,cache=TRUE}
+notin = setdiff(compounds_v1$name, mm)
+#library(BiocParallel)
+#register(MulticoreParam())
+library(parallel)
+options(mc.cores=2)
+lk50 = mclapply(notin[1:50], function(x) fastGrep(x, chl, "synonym")[1])
+uu = unlist(lk50)
+mean(is.na(uu)) # recovery not impressive
+names(uu) = notin[1:50]
+inds = na.omit(uu)
+```
+```{r lktabb}
+datatable(data.frame(id=chl$id[inds], given=names(inds), chebi=chl$name[inds]))
+```
 

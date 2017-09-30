@@ -6,6 +6,9 @@
 \usage{
 topEndpoints_v1()
 }
+\value{
+a character vector of available endpoints
+}
 \description{
 enumerate top level endpoint terms for bhklab PharmacoDB API
 }
