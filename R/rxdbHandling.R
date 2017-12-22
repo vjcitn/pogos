@@ -15,7 +15,7 @@ topEndpoints_v1 = function() {
 #' @param x string suitable for input to GET as GET(x)
 #' @return output of fromJSON, typically a list
 #' @examples
-#' cl = basicDecoder("https://api.pharmacodb.com/v1/cell_lines")
+#' cl = basicDecoder("https://pharmacodb.pmgenomics.ca/api/v1/cell_lines")
 #' unlist(cl)
 #' @export
 basicDecoder = function(x)
@@ -31,7 +31,7 @@ basicDecoder = function(x)
 #' qout = rxdbQuery_v1("cell_lines") # yields 30; append "?all=true" to retrieve all
 #' sapply(qout, function(x) x[[2]])
 #' @export
-rxdbQuery_v1 = function(..., url="https://api.pharmacodb.com/v1/", 
+rxdbQuery_v1 = function(..., url="https://pharmacodb.pmgenomics.ca/api/v1/", 
                           decoder=basicDecoder) {
    parms = list(...)
    decoder(paste0(url, unlist(parms)))

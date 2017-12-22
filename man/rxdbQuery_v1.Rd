@@ -4,7 +4,7 @@
 \alias{rxdbQuery_v1}
 \title{very simple query formulation, build queries using endpoints of bhklab PharmacoDB API}
 \usage{
-rxdbQuery_v1(..., url = "https://api.pharmacodb.com/v1/",
+rxdbQuery_v1(..., url = "https://pharmacodb.pmgenomics.ca/api/v1/",
   decoder = basicDecoder)
 }
 \arguments{

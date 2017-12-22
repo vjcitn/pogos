@@ -11,7 +11,7 @@ output:
     highlight: pygments
     number_sections: yes
     theme: united
-    toc: yes
+    toc_float: yes
 ---
 
 # Introduction
@@ -20,6 +20,12 @@ bhklab's PharmacoDB unites multiple drug sensitivity databases.
 A REST API is available and interfaces to some basic endpoints are
 provided in this package.  We also provide some basic
 support for working with the Cell Line Ontology and ChEBI.
+
+We note that detailed RESTful interrogation of many ontologies
+is supported by the `r Biocpkg("rols")` package.  In the long
+run we would like to make use of the EBI Ontology Lookup System
+as a central resource of this package, but to develop concepts
+at these early stages, static images of ontologies are employed.
 
 ```{r setup,echo=FALSE}
 suppressMessages({
@@ -35,7 +41,7 @@ library(DT)
 
 We precomputed tables for cell lines, compounds, and tissues.
 These are available as DataFrame instances as
-`cell_lines_v1`, `compounds_v1`, and `tissues_v1`, in
+`cell_lines_v1`, `compounds_v1`, `datasets_v1`, and `tissues_v1`, in
 the data element of the package.
 
 Numerical ids are defined by the PharmacoDB.
@@ -53,7 +59,20 @@ datatable(as.data.frame(compounds_v1),
    options=list(lengthMenu=c(3,5,10,50,100)))
 ```
 
-# Bridging to Cell Line Ontology
+## Datasets
+```{r lkccc2, echo=FALSE}
+data(datasets_v1)
+datatable(as.data.frame(datasets_v1))
+```
+
+# Working with specific elements
+
+We want to maximize utility of institutionally curated
+terminology for components of pharmacodb.
+
+## Cell line identifiers
+
+### Bridging to Cell Line Ontology
 
 The following identifiers are available in the PharmacoDB cell lines:
 ```
@@ -68,37 +87,51 @@ minds = which(clo$name %in% c("143B cell", "1321N1 cell", "184B5 cell"))
 tags = clo$id[minds]
 clo$name[ unlist(clo$parent[tags]) ]
 ```
-Now: how can we connect the anatomic vocabulary in these terms
+TODO: how can we connect the anatomic vocabulary in these terms
 to formal anatomical terms in UBERON or CARO?
 
-# Bridging to ChEBI
+## Compounds
+
+### Bridging to ChEBI
 
 This will involve more work.  We have the compounds in PharmacoDB.
 How many match the compound names in Chebi? 
 ```{r lkcom}
 chl = getChebiOnto()
 allch = chl$name
-mm = allch[match(compounds_v1[,2], allch, nomatch=0)]
+mm = allch[match(tolower(compounds_v1[,2]), tolower(allch), nomatch=0)]
 round(length(mm)/nrow(compounds_v1),2) # not high
 datatable(data.frame(id=names(mm), comp=as.character(mm)))
 ```
 
-Direct matches are relatively rare.  We also search the
-synonym data in ChEBI
+Direct matches are relatively rare.  Attempts to use approximate
+matching with agrep have so far been unproductive.  As an
+example, which we do not run:
 
-```{r srchsym,cache=TRUE}
+```{r srchsym, eval=FALSE}
 notin = setdiff(compounds_v1$name, mm)
-#library(BiocParallel)
-#register(MulticoreParam())
 library(parallel)
 options(mc.cores=2)
-lk50 = mclapply(notin[1:50], function(x) fastGrep(x, chl, "synonym")[1])
-uu = unlist(lk50)
-mean(is.na(uu)) # recovery not impressive
-names(uu) = notin[1:50]
-inds = na.omit(uu)
-```
-```{r lktabb}
-datatable(data.frame(id=chl$id[inds], given=names(inds), chebi=chl$name[inds]))
+allch = tolower(allch)
+notin = tolower(notin)
+lk50 = mclapply(notin[1:50], function(x) { cat(x);
+       order(adist(x, allch))[1:5]})
+names(lk50) = notin[1:50]
+aa = do.call(cbind, lk50[1:50])
+ttt = t(apply(aa,2,function(x) allch[x])[1:3,])
 ```
 
+# Retrieving dose-response data for cell-line/compound intersections
+
+Given a cell-line code and a database, we can retrieve all the experiments
+associated with it in that database.
+
+CCLE for MCF-7:
+```{r lkcomb}
+library(rjson)
+library(httr)
+xx = GET("https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/895/1?indent=true")
+ans = fromJSON(readBin(xx$content, what="character"))
+doses1 = sapply(ans[[1]]$dose_responses, function(x) x[[1]])
+resp1 =  sapply(ans[[1]]$dose_responses, function(x) x[[2]])
+```
