@@ -137,6 +137,27 @@ clo$name[ unlist(clo$parent[tags]) ]
 TODO: how can we connect the anatomic vocabulary in these terms
 to formal anatomical terms in UBERON or CARO?
 
+### Vocabularies of anatomy
+
+The Experimental Factor Ontology unifies various ontologies and
+includes terms related to anatomic systems.  At least with the
+infrastructure available in `r CRANpkg("ontologyIndex")` and
+`r CRANpkg("ontologyPlot")`, it seems there are opportunities to
+add meaningful connections.
+
+```{r lkefo, fig=TRUE}
+onto_plot(ee, c("UBERON:0000474", "UBERON:0000079", 
+  "UBERON:0000990", "UBERON:0000995", "UBERON:0003982", 
+  "UBERON:0000310", "UBERON:0002107", "UBERON:0001264", 
+  "UBERON:0002113", "UBERON:0001007", "UBERON:0002530", 
+  "UBERON:6007435", "UBERON:0004122", "UBERON:0001008"))
+```
+
+It is likely important to remember the distinction between an
+ontology, a structured collection of concept terms, and a
+curated vocabulary or ontology annotation, which covers
+concept "instances".
+
 ## Compounds
 
 ### Bridging to ChEBI
