@@ -1,13 +1,12 @@
 #' initial version of compound browser over pharmacoDb cells
+#' @import shiny
+#' @import ontoProc
 #' @note simple shiny app demonstrating coverage of pharmacoDb compounds by CHEBI
 #' @export
 compoundsByCell = function() {
-library(pogos)
-library(shiny)
-data(cell_lines_v1)
-data(compounds_v1)
-data(datasets_v1)
-library(ontoProc)
+data(cell_lines_v1, package="pogos")
+data(compounds_v1, package="pogos")
+data(datasets_v1, package="pogos")
 message("acquiring CHEBI")
 if (!exists("cc")) cc = getChebiOnto()
 message("done")
@@ -24,6 +23,7 @@ names(compoundCodes) = compoundVec
 ui = fluidPage(
  sidebarLayout(
   sidebarPanel(
+   helpText("This app enumerates compounds that have been tested against selected cell lines in selected experiments."),
    selectInput("cell", "cell line", choices=cellLineVec, selected="MCF7"),
    #selectInput("compound", "compound", choices=compoundVec, selected=compoundVec[1]),
    selectInput("dataset", "dataset", choices=datasetVec, selected="CCLE")
@@ -44,17 +44,21 @@ server = function(input, output) {
        sprintf("https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/%d/%d?indent=true",
        cellLineCodes[input$cell], datasetCodes[input$dataset] ))
     ans = fromJSON(readBin(xx$content, what="character"))
+    validate(need(length(ans)>0, "cell line not tested in selected experiment"))
     if (length(ans)>0) {
       alld = sapply(ans, "[[", "drug")
       dn = as.character(alld[2,])
       chebn = tolower(cc$name)
       checo = names(cc$name)
+      chepar = vapply(cc$parents[cc$id], function(x)x[1], character(1))
+      cheparn = as.character(cc$name[chepar])
       lk = match(tolower(dn), chebn, nomatch=NA)
       chema = checo[lk]
+      cheparn = cheparn[lk]
 uwrap = function(id)
-   sprintf("<A href='http://www.ebi.ac.uk/chebi/chebiOntology.do?chebiId=%s'>%s</A>", id, id)
+   sprintf("<A href='http://www.ebi.ac.uk/chebi/chebiOntology.do?chebiId=%s' target='_blank'>%s</A>", id, id)
       wrid = a(href=uwrap(chema), chema)
-      nn = data.frame(drug=dn, chebi=chema, chbn=chebn[lk], url=uwrap(chema))
+      nn = data.frame(drug=dn, chebi=uwrap(chema), parent=cheparn)
       } 
     else nn = data.frame(n=as.character(length(ans)))
     nn
