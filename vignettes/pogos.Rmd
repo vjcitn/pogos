@@ -37,6 +37,53 @@ library(DT)
 })
 ```
 
+## Coverage of pharmacogenomic compound names by ChEBI
+
+As an illustration of long-term intention of this package, consider
+the following snapshot of a slice of ChEBI.
+
+```{r doch,fig=TRUE}
+library(ontoProc)
+cc = getChebiOnto()
+library(ontologyPlot)
+onto_plot(cc, 
+  c("CHEBI:134109", "CHEBI:61115", "CHEBI:75603", "CHEBI:37699", 
+       "CHEBI:68481", "CHEBI:71178"), fontsize=24, shape="rect")
+```
+It is natural to map the compounds studied in pharmacogenomics to these
+compound classes as a step towards understanding common and distinct
+mechanisms of action.  But in the following display, we see
+that some common chemotherapeutic agents are characterized in very
+generic terms:
+
+```{r lkmo, fig=TRUE}
+onto_plot(cc, c("CHEBI:134109", "CHEBI:61115", "CHEBI:75603", "CHEBI:37699", 
+   "CHEBI:68481", "CHEBI:71178", "CHEBI:52172", "CHEBI:64310", 
+   "CHEBI:63632", "CHEBI:45863"), fontsize=28, shape="rect")
+```
+
+Should paclitaxel be identified as an "organic molecular entity"
+with no additional detail?  Is there additional information in
+ChEBI or related ontologies to help organize information on
+related compounds?
+
+## Relationships among cell lines
+
+Cell line nomenclature is often unnatural.  The Cell Line
+Ontology should be helpful in systematizing cell lines
+used in pharmacogenomics.  Nevertheless there is
+some apparent lack of consistency.
+
+```{r ana,fig=TRUE}
+clo = getCellLineOnto()
+smoc = c("CLO:0000517", "CLO:0000560", "CLO:0000563", "CLO:0001072", 
+"CLO:0001088", "CLO:0001138", "CLO:0007606")
+onto_plot(clo, smoc)
+```
+
+The MCF7 line should probably be annotated as related to human
+mammary tissue.
+
 # Some stored reference data
 
 We precomputed tables for cell lines, compounds, and tissues.
@@ -135,3 +182,6 @@ ans = fromJSON(readBin(xx$content, what="character"))
 doses1 = sapply(ans[[1]]$dose_responses, function(x) x[[1]])
 resp1 =  sapply(ans[[1]]$dose_responses, function(x) x[[2]])
 ```
+
+The `compoundsByCell` function employs this pattern to establish
+lists of experiments per cell type.
