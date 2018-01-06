@@ -33,6 +33,7 @@ suppressPackageStartupMessages({
 library(pogos)
 library(S4Vectors)
 library(DT)
+library(ggplot2)
 })
 })
 ```
@@ -207,3 +208,13 @@ resp1 =  sapply(ans[[1]]$dose_responses, function(x) x[[2]])
 
 The `compoundsByCell` function employs this pattern to establish
 lists of experiments per cell type.
+
+We can recreate (approximately: the dose and response units
+need to be clarified) Figure 4b from Barretina et al. 2012
+as follows (defaults to DRTraceSet are specifically chosen
+to compute this figure):
+
+```{r lkbar, fig=TRUE}
+library(ggplot2)
+plot(DRTraceSet(dataset="CCLE"))
+```

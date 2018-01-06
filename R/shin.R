@@ -2,6 +2,10 @@
 #' @import shiny
 #' @import ontoProc
 #' @note simple shiny app demonstrating coverage of pharmacoDb compounds by CHEBI
+#' @return only used for side effect of running shiny app
+#' @examples
+#' if (!requireNamespace("shiny")) stop("install shiny to use compoundsByCell")
+#' if (interactive()) print(compoundsByCell())
 #' @export
 compoundsByCell = function() {
 data(cell_lines_v1, package="pogos")

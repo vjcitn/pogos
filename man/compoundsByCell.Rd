@@ -6,9 +6,16 @@
 \usage{
 compoundsByCell()
 }
+\value{
+only used for side effect of running shiny app
+}
 \description{
 initial version of compound browser over pharmacoDb cells
 }
 \note{
 simple shiny app demonstrating coverage of pharmacoDb compounds by CHEBI
+}
+\examples{
+if (!requireNamespace("shiny")) stop("install shiny to use compoundsByCell")
+if (interactive()) print(compoundsByCell())
 }
