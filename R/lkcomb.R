@@ -125,14 +125,17 @@ DRTraceSet = function(cell_lines = c("SK-ES-1", "TC-71",
              "MHH-ES-1", "HCC-56", "SK-HEP-1"),
              drug = "Irinotecan", dataset="CCLE") {
   if (length(drug)!=1) stop("currently handles only one drug at a time")
-  st1 = lapply(cell_lines, function(x) try(lkc(x, dataset)))
-  errs = vapply(st1, function(x) inherits(x, "try-error"), logical(1))
+  st1 = lapply(cell_lines, function(x) try(lkc(x, dataset), silent=TRUE))
+  errs = vapply(st1, function(x) 
+     inherits(x, "try-error") ||  length(x@DRProfiles)==0, logical(1))
   if (any(errs)) {
     if (all(errs)) stop("no data for requested cell lines")
     message("no data for some requested cell lines:")
     message(paste(" ", cell_lines[which(errs)], sep=" "))
     st1 = st1[-which(errs)]
     }
-  new("DRTraceSet", cell_lines=cell_lines,
+  kp = (1:length(cell_lines))
+  if (any(errs)) kp = kp[-which(errs)]
+  new("DRTraceSet", cell_lines=cell_lines[kp],
         drug=drug, dataset=dataset, traces=lapply(st1, function(x) x[drug]))
 }
