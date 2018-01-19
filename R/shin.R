@@ -1,7 +1,10 @@
 #' initial version of compound browser over pharmacoDb cells
 #' @import shiny
 #' @import ontoProc
-#' @note simple shiny app demonstrating coverage of pharmacoDb compounds by CHEBI
+#' @note Simple shiny app demonstrating coverage of PharmacoDb 
+#' compounds by CHEBI.  If a cell line selected is not present 
+#' in selected dataset, the app will wait for a 
+#' compatible selection to be made.
 #' @return only used for side effect of running shiny app
 #' @examples
 #' if (!requireNamespace("shiny")) stop("install shiny to use compoundsByCell")
@@ -33,7 +36,9 @@ ui = fluidPage(
    selectInput("dataset", "dataset", choices=datasetVec, selected="CCLE")
    ),
   mainPanel( 
-      textOutput("cell"), textOutput("dataset"),
+      #textOutput("cell"), textOutput("dataset"),
+      helpText("Table may be searched or sorted by fields \
+for compound identifier or term parent in ChEBI\n"),
       dataTableOutput("nres")
    )
   )
@@ -50,7 +55,7 @@ server = function(input, output) {
     ans = fromJSON(readBin(xx$content, what="character"))
     validate(need(length(ans)>0, "cell line not tested in selected experiment"))
     if (length(ans)>0) {
-      alld = vapply(ans, "[[", "compound", character(1))
+      alld = vapply(ans, function(x) x[["compound"]], vector("list", 2)) #"[[", "compound", vector("list", 2)) #, character(1))
       dn = as.character(alld[2,])
       chebn = tolower(cc$name)
       checo = names(cc$name)
@@ -62,9 +67,9 @@ server = function(input, output) {
 uwrap = function(id)
    sprintf("<A href='http://www.ebi.ac.uk/chebi/chebiOntology.do?chebiId=%s' target='_blank'>%s</A>", id, id)
       wrid = a(href=uwrap(chema), chema)
-      nn = data.frame(drug=dn, chebi=uwrap(chema), parent=cheparn)
+      nn = data.frame(drug=dn, chebi=uwrap(chema), parent=cheparn, stringsAsFactors=FALSE)
       } 
-    else nn = data.frame(n=as.character(length(ans)))
+    else nn = data.frame(n=as.character(length(ans)), stringsAsFactors=FALSE)
     nn
     }, escape=FALSE)
 }

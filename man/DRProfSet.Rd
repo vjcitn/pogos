@@ -6,7 +6,8 @@
 \alias{DRProfSet}
 \alias{getDrugs}
 \alias{getDrugs,DRProfSet-method}
-\title{DRProfSet is a class for managing dose-response information about cell lines from a pharmacogenomics dataset}
+\title{DRProfSet is a class for managing dose-response information about 
+cell lines from a pharmacogenomics dataset}
 \usage{
 getDrugs(x)
 }
@@ -17,13 +18,14 @@ getDrugs(x)
 getDrugs: character vector
 }
 \description{
-DRProfSet is a class for managing dose-response information about cell lines from a pharmacogenomics dataset
+DRProfSet is a class for managing dose-response information about 
+cell lines from a pharmacogenomics dataset
 
 getDrugs extracts drug list
 }
 \examples{
 trs = DRTraceSet()
-ps = trs@traces[[1]]
-class(ps)
+ps = slot(trs, "traces")[[1]]
+ps
 getDrugs(ps)
 }

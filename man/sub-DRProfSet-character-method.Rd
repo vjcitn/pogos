@@ -3,7 +3,8 @@
 \docType{methods}
 \name{[,DRProfSet,character-method}
 \alias{[,DRProfSet,character-method}
-\title{subscripting on DRProfSet extracts a profile for a single drug whose name constitutes the index}
+\title{subscripting on DRProfSet extracts a profile for a single drug 
+whose name constitutes the index}
 \usage{
 \S4method{[}{DRProfSet,character}(x, i, j, ..., drop = TRUE)
 }
@@ -22,5 +23,6 @@
 a DRProfSet instance restricted to experiments involving the selected drug
 }
 \description{
-subscripting on DRProfSet extracts a profile for a single drug whose name constitutes the index
+subscripting on DRProfSet extracts a profile for a single drug 
+whose name constitutes the index
 }

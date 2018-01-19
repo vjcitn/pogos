@@ -19,7 +19,8 @@ DRTraceSet(cell_lines = c("SK-ES-1", "TC-71", "MHH-ES-1", "HCC-56",
 
 \item{\dots}{not used}
 
-\item{cell_lines}{character vector of cell line names, must be found in `cell_lines_v1` data of pogos package}
+\item{cell_lines}{character vector of cell line names, must be found 
+in `cell_lines_v1` data of pogos package}
 
 \item{drug}{character(1) drug name in `compounds_v1`}
 

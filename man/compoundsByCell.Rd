@@ -13,7 +13,10 @@ only used for side effect of running shiny app
 initial version of compound browser over pharmacoDb cells
 }
 \note{
-simple shiny app demonstrating coverage of pharmacoDb compounds by CHEBI
+Simple shiny app demonstrating coverage of PharmacoDb 
+compounds by CHEBI.  If a cell line selected is not present 
+in selected dataset, the app will wait for a 
+compatible selection to be made.
 }
 \examples{
 if (!requireNamespace("shiny")) stop("install shiny to use compoundsByCell")
