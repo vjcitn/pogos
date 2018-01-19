@@ -71,8 +71,8 @@ lkc = function(cell_line="MCF7", dataset="CCLE") {
                 cellLineCodes[cell_line], datasetCodes[dataset]))
  ans = fromJSON(readBin(xx$content, what = "character"))
  ans = lapply(ans, function(comb) {
-       new("DRProfile", cell_line=cell_line, dataset=dataset, drug=comb$drug$name,
-       drug_code=comb$drug$id, cell_line_code=comb$cell_line$id,
+       new("DRProfile", cell_line=cell_line, dataset=dataset, drug=comb$compound$name,
+       drug_code=comb$compound$id, cell_line_code=comb$cell_line$id,
   doses = vapply(comb$dose_responses, function(x)x$dose, numeric(1)),
   responses = vapply(comb$dose_responses, function(x)x$response, numeric(1)))
   })
