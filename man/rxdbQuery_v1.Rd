@@ -21,6 +21,6 @@ typically a list, dependent on decoder parameter
 very simple query formulation, build queries using endpoints of bhklab PharmacoDB API
 }
 \examples{
-qout = rxdbQuery_v1("cell_lines") # yields 30; append "?all=true" to retrieve all
+qout = rxdbQuery_v1('cell_lines') # yields 30; append '?all=true' to retrieve all
 unlist(lapply(qout, function(x) x[[2]]))
 }

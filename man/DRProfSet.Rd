@@ -3,6 +3,7 @@
 \docType{class}
 \name{DRProfile-class}
 \alias{DRProfile-class}
+\alias{DRProfSet}
 \alias{getDrugs}
 \alias{getDrugs,DRProfSet-method}
 \title{DRProfSet is a class for managing dose-response information about cell lines from a pharmacogenomics dataset}
@@ -19,4 +20,10 @@ getDrugs: character vector
 DRProfSet is a class for managing dose-response information about cell lines from a pharmacogenomics dataset
 
 getDrugs extracts drug list
+}
+\examples{
+trs = DRTraceSet()
+ps = trs@traces[[1]]
+class(ps)
+getDrugs(ps)
 }
