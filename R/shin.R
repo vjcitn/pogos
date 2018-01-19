@@ -50,7 +50,7 @@ server = function(input, output) {
     ans = fromJSON(readBin(xx$content, what="character"))
     validate(need(length(ans)>0, "cell line not tested in selected experiment"))
     if (length(ans)>0) {
-      alld = sapply(ans, "[[", "drug")
+      alld = vapply(ans, "[[", "compound", character(1))
       dn = as.character(alld[2,])
       chebn = tolower(cc$name)
       checo = names(cc$name)

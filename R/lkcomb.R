@@ -1,5 +1,6 @@
 #' DRProfSet is a class for managing dose-response information about cell lines from a pharmacogenomics dataset
 #' @import methods
+#' @importFrom graphics lines
 #' @rdname DRProfSet
 #' @export
 setClass("DRProfile", representation(cell_line="character", drug="character",
@@ -94,7 +95,7 @@ setMethod("show", "DRTraceSet", function(object) {
    ds = lapply(drts@traces, function(x)x@DRProfiles[[1]]@doses)
    rs = lapply(drts@traces, function(x)x@DRProfiles[[1]]@responses)
    cls = vapply(drts@traces, function(x) x@cell_line, character(1))
-   ns = sapply(ds,length)
+   ns = vapply(ds,length,numeric(1))
    cls = rep(cls, ns)
    data.frame(dose=unlist(ds), response=unlist(rs), cell_line=cls,
      dataset=drts@dataset, drug=drts@drug)
@@ -134,7 +135,7 @@ DRTraceSet = function(cell_lines = c("SK-ES-1", "TC-71",
     message(paste(" ", cell_lines[which(errs)], sep=" "))
     st1 = st1[-which(errs)]
     }
-  kp = (1:length(cell_lines))
+  kp = seq_len(length(cell_lines))
   if (any(errs)) kp = kp[-which(errs)]
   new("DRTraceSet", cell_lines=cell_lines[kp],
         drug=drug, dataset=dataset, traces=lapply(st1, function(x) x[drug]))

@@ -29,7 +29,7 @@ basicDecoder = function(x)
 #' @return typically a list, dependent on decoder parameter
 #' @examples
 #' qout = rxdbQuery_v1("cell_lines") # yields 30; append "?all=true" to retrieve all
-#' sapply(qout, function(x) x[[2]])
+#' unlist(lapply(qout, function(x) x[[2]]))
 #' @export
 rxdbQuery_v1 = function(..., url="https://pharmacodb.pmgenomics.ca/api/v1/", 
                           decoder=basicDecoder) {
@@ -39,14 +39,14 @@ rxdbQuery_v1 = function(..., url="https://pharmacodb.pmgenomics.ca/api/v1/",
  
 compoundTable = function(postfix="?all=true") {
   comps = rxdbQuery_v1(paste0("compounds", postfix))
-  ids = sapply(comps, "[[", "id")
-  nms = sapply(comps, "[[", "name")
+  ids = vapply(comps, "[[", "id", character(1))
+  nms = vapply(comps, "[[", "name", character(1))
   DataFrame(compound_id=ids, compound=nms)
 }
 
 buildMap = function(endpoint="cell_lines", postfix="?all=true") {
   recs = rxdbQuery_v1(paste0(endpoint, postfix))
-  ids = sapply(recs, "[[", "id")
-  nms = sapply(recs, "[[", "name")
+  ids = vapply(recs, "[[", "id", character(1))
+  nms = vapply(recs, "[[", "name", character(1))
   DataFrame(id=ids, name=nms)
 }

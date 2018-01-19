@@ -22,5 +22,5 @@ very simple query formulation, build queries using endpoints of bhklab PharmacoD
 }
 \examples{
 qout = rxdbQuery_v1("cell_lines") # yields 30; append "?all=true" to retrieve all
-sapply(qout, function(x) x[[2]])
+unlist(lapply(qout, function(x) x[[2]]))
 }
