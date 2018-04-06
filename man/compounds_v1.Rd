@@ -6,6 +6,7 @@
 \alias{tissues_v1}
 \alias{cell_lines_v1}
 \alias{datasets_v1}
+\alias{CCLE_drts}
 \title{compounds_v1: serialization of compounds info from PharmacoDb v1}
 \format{S4Vectors DataFrame instance}
 \source{
@@ -16,6 +17,8 @@ PharmacoDb Sept 2017
 PharmacoDb Sept 2017
 
 PharmacoDb Sept 2017
+
+PharmacoDb April 2018
 }
 \usage{
 compounds_v1
@@ -25,6 +28,8 @@ tissues_v1
 cell_lines_v1
 
 datasets_v1
+
+CCLE_drts
 }
 \description{
 compounds_v1: serialization of compounds info from PharmacoDb v1
@@ -38,5 +43,7 @@ data(cell_lines_v1)
 head(cell_lines_v1)
 data(datasets_v1)
 head(datasets_v1)
+data(CCLE_drts)
+CCLE_drts
 }
 \keyword{datasets}

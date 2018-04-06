@@ -1,12 +1,40 @@
+#onto_plot(oto, st@ontoTags, fontsize=50)
+#    r = sapply(x@traces, function(x) f(x@DRProfiles[[1]]@responses))
+#    data.frame(Cell_line_primary_name = x@cell_lines, resp = r, 
+#        drug = x@drug, dataset = x@dataset)
+
+#' trace extractor
+#' @param x instance of DRTraceSet
+#' @importFrom methods is
+#' @examples
+#' iri = iriCCLE()
+#' str(traces(iri)[[1]])
+#' @export
+traces = function(x) {
+ stopifnot(is(x, "DRTraceSet"))
+ slot(x, "traces")
+}
+
+# #' profiles extractor
+# #' @param x instance of DRTraceSet
+# #' @examples
+# #' iri = iriCCLE()
+# #' str(DRProfiles(iri)[[1]])
+# #' @export
+# DRProfiles = function(x) {
+#  stopifnot(is(x, "DRTraceSet"))
+#  slot(x, "DRProfiles")
+# }
+
 #' DRProfSet is a class for managing dose-response information about 
 #' cell lines from a pharmacogenomics dataset
 #' @import methods
 #' @importFrom graphics lines
 #' @rdname DRProfSet
-#' @aliases DRProfSet
+#' @aliases DRProfSet-class DRProfSet
 #' @examples
-#' trs = DRTraceSet()
-#' ps = slot(trs, "traces")[[1]]
+#' if (interactive()) trs = DRTraceSet() else trs = iriCCLE()
+#' ps = traces(trs)[[1]]
 #' ps
 #' getDrugs(ps)
 #' @export
@@ -158,4 +186,17 @@ DRTraceSet = function(cell_lines = c("SK-ES-1", "TC-71", "MHH-ES-1", "HCC-56", "
         kp = kp[-which(errs)]
     new("DRTraceSet", cell_lines = cell_lines[kp], drug = drug, dataset = dataset, 
         traces = lapply(st1, function(x) x[drug]))
+}
+
+
+#' DRProfSet manages all data from a given cell line from
+#' a pharmacogenomics source
+#' @param cell_line character(1) cell line name, entries in cell_lines_v1
+#' @param dataset character(1) resource name, entries in datasets_v1
+#' @return instance of DRProfSet
+#' @examples
+#' if (interactive()) DRProfSet()
+#' @export
+DRProfSet = function(cell_line = "MCF7", dataset = "CCLE") {
+  try(lkc(cell_line=cell_line, dataset=dataset))
 }

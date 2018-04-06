@@ -38,6 +38,62 @@ library(ggplot2)
 })
 ```
 
+# Basic software design for pogos
+
+This package attacks two problems: organization of data on
+cell-line response to treatments by diverse compounds, and
+communication with PharmacoDb.
+
+## Data structures for pharmacogenomics
+
+The key data structure defined in `r Biocpkg("pogos")` is
+`DRTraceSet`.  An example is
+```{r lkcc}
+iric = iriCCLE()
+iric 
+```
+
+The `plot` method reveals a basic motivation for the class.
+```{r lkpl090, fig.height=2.5}
+plot(iric)
+```
+
+Such profiling data are acquired from PharmacoDb using the `DRTraceSet`
+constructor.  The arguments available are
+```{r lkar}
+args(DRTraceSet)
+```
+
+## Interrogating PharmacoDb
+
+# Some stored reference data
+
+We precomputed tables for cell lines, compounds, and tissues.
+These are available as DataFrame instances as
+`cell_lines_v1`, `compounds_v1`, `datasets_v1`, and `tissues_v1`, in
+the data element of the package.
+
+Numerical ids are defined by the PharmacoDB.
+
+## Cell lines
+```{r lkk, echo=FALSE}
+data(cell_lines_v1)
+datatable(as.data.frame(cell_lines_v1), options=list(lengthMenu=c(3,5,10,50,100)))
+```
+
+## Compounds
+```{r lkccc, echo=FALSE}
+data(compounds_v1)
+datatable(as.data.frame(compounds_v1), 
+   options=list(lengthMenu=c(3,5,10,50,100)))
+```
+
+## Datasets
+```{r lkccc2, echo=FALSE}
+data(datasets_v1)
+datatable(as.data.frame(datasets_v1))
+```
+
 ## Coverage of pharmacogenomic compound names by ChEBI
 
 As an illustration of long-term intention of this package, consider
@@ -85,33 +141,6 @@ onto_plot(clo, smoc)
 The MCF7 line should probably be annotated as related to human
 mammary tissue.
 
-# Some stored reference data
-
-We precomputed tables for cell lines, compounds, and tissues.
-These are available as DataFrame instances as
-`cell_lines_v1`, `compounds_v1`, `datasets_v1`, and `tissues_v1`, in
-the data element of the package.
-
-Numerical ids are defined by the PharmacoDB.
-
-## Cell lines
-```{r lkk, echo=FALSE}
-data(cell_lines_v1)
-datatable(as.data.frame(cell_lines_v1), options=list(lengthMenu=c(3,5,10,50,100)))
-```
-
-## Compounds
-```{r lkccc, echo=FALSE}
-data(compounds_v1)
-datatable(as.data.frame(compounds_v1), 
-   options=list(lengthMenu=c(3,5,10,50,100)))
-```
-
-## Datasets
-```{r lkccc2, echo=FALSE}
-data(datasets_v1)
-datatable(as.data.frame(datasets_v1))
-```
 
 # Working with specific elements
 

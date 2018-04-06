@@ -3,29 +3,43 @@
 \docType{class}
 \name{DRProfile-class}
 \alias{DRProfile-class}
+\alias{DRProfSet-class}
 \alias{DRProfSet}
 \alias{getDrugs}
 \alias{getDrugs,DRProfSet-method}
+\alias{DRProfSet}
 \title{DRProfSet is a class for managing dose-response information about 
 cell lines from a pharmacogenomics dataset}
 \usage{
 getDrugs(x)
+
+DRProfSet(cell_line = "MCF7", dataset = "CCLE")
 }
 \arguments{
 \item{x}{instance of DRProfSet}
+
+\item{cell_line}{character(1) cell line name, entries in cell_lines_v1}
+
+\item{dataset}{character(1) resource name, entries in datasets_v1}
 }
 \value{
 getDrugs: character vector
+
+instance of DRProfSet
 }
 \description{
 DRProfSet is a class for managing dose-response information about 
 cell lines from a pharmacogenomics dataset
 
 getDrugs extracts drug list
+
+DRProfSet manages all data from a given cell line from
+a pharmacogenomics source
 }
 \examples{
-trs = DRTraceSet()
-ps = slot(trs, "traces")[[1]]
+if (interactive()) trs = DRTraceSet() else trs = iriCCLE()
+ps = traces(trs)[[1]]
 ps
 getDrugs(ps)
+if (interactive()) DRProfSet()
 }

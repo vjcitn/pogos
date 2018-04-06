@@ -31,3 +31,12 @@
 #' data(datasets_v1)
 #' head(datasets_v1)
 "datasets_v1"
+
+#' @rdname compounds_v1
+#' @docType data
+#' @format DRTraceSet instance
+#' @source PharmacoDb April 2018
+#' @examples
+#' data(CCLE_drts)
+#' CCLE_drts
+"CCLE_drts"

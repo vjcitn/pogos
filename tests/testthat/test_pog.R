@@ -4,7 +4,7 @@ library(pogos)
 context("testTargets")
 test_that("test suite knows how many functions are exported", {
     exported = ls("package:pogos")
-    expect_true(length(exported) == 7)
+    expect_true(length(exported) >= 7)
 })
 
 context("testInterface")
