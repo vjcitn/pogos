@@ -1,4 +1,5 @@
 #' obtain an example trace set stored locally, for irinotecan and selected cell lines
+#' @return an instance of DRTraceSet
 #' @examples
 #' iri = iriCCLE()
 #' iri

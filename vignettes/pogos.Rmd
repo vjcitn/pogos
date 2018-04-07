@@ -21,6 +21,13 @@ A REST API is available and interfaces to some basic endpoints are
 provided in this package.  We also provide some basic
 support for working with the Cell Line Ontology and ChEBI.
 
+A basic purpose of this package is to support exploration of
+the completeness and utility 
+of available ontologies for cell lines and drugs.
+A relevant study of the possibility of "drug set
+enrichment analysis" has been published
+by [Napolitano and colleagues](https://www.ncbi.nlm.nih.gov/pubmed/26415724).
+
 We note that detailed RESTful interrogation of many ontologies
 is supported by the `r Biocpkg("rols")` package.  In the long
 run we would like to make use of the EBI Ontology Lookup System
@@ -46,25 +53,56 @@ communication with PharmacoDb.
 
 ## Data structures for pharmacogenomics
 
-The key data structure defined in `r Biocpkg("pogos")` is
-`DRTraceSet`.  An example is
+This package provides two key data structures for managing pharmacogenomic
+experimental results
+
+- `DRTraceSet`: for a given dosage schedule for a given compound, manage the
+dose-response profiles for a number of cell lines. 
+An example is
 ```{r lkcc}
 iric = iriCCLE()
 iric 
 ```
+- `DRProfSet`: for a given cell line, provide the dose-response profiles for
+a number of compounds.  Example:
+```{r lkdrp}
+drp = DRProfSet()
+drp
+```
 
-The `plot` method reveals a basic motivation for the class.
+The `plot` method reveals a basic motivation for `DRTraceSet`.
 ```{r lkpl090, fig.height=2.5}
 plot(iric)
 ```
 
-Such profiling data are acquired from PharmacoDb using the `DRTraceSet`
-constructor.  The arguments available are
-```{r lkar}
-args(DRTraceSet)
+The plot method for DRProfSet has a complementary purpose.
+```{r lklll,fig.height=3.5}
+plot(drp)
 ```
 
 ## Interrogating PharmacoDb
+
+The communications part of the package is somewhat
+fragile, as changes to the upstream service at
+Princess Margaret can lead to failures here.
+
+The heart of the query facility is shown here,
+unevaluated.  The `datasetCodes` and `cellLineCodes`
+are extracted from reference data that may itself
+go out of date.
+```
+    xx = GET(sprintf("https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/%d/%d?indent=true", 
+        cellLineCodes[cell_line], datasetCodes[dataset]))
+    ans = fromJSON(readBin(xx$content, what = "character"))
+    ans = lapply(ans, function(comb) {
+        new("DRProfile", cell_line = cell_line, dataset = dataset, 
+            drug = comb$compound$name, drug_code = comb$compound$id, 
+            cell_line_code = comb$cell_line$id, doses = vapply(comb$dose_responses, 
+                function(x) x$dose, numeric(1)), responses = vapply(comb$dose_responses, 
+                function(x) x$response, numeric(1)))
+    })
+```
+
 
 # Some stored reference data
 
@@ -226,7 +264,7 @@ Given a cell-line code and a database, we can retrieve all the experiments
 associated with it in that database.
 
 CCLE for MCF-7:
-```{r lkcomb}
+```{r lkcomb,cache=TRUE}
 library(rjson)
 library(httr)
 xx = GET("https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/895/1?indent=true")

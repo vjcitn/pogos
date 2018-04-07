@@ -1,11 +1,7 @@
-#onto_plot(oto, st@ontoTags, fontsize=50)
-#    r = sapply(x@traces, function(x) f(x@DRProfiles[[1]]@responses))
-#    data.frame(Cell_line_primary_name = x@cell_lines, resp = r, 
-#        drug = x@drug, dataset = x@dataset)
-
 #' trace extractor
 #' @param x instance of DRTraceSet
 #' @importFrom methods is
+#' @return a list of DRProfile instances
 #' @examples
 #' iri = iriCCLE()
 #' str(traces(iri)[[1]])
@@ -14,17 +10,6 @@ traces = function(x) {
  stopifnot(is(x, "DRTraceSet"))
  slot(x, "traces")
 }
-
-# #' profiles extractor
-# #' @param x instance of DRTraceSet
-# #' @examples
-# #' iri = iriCCLE()
-# #' str(DRProfiles(iri)[[1]])
-# #' @export
-# DRProfiles = function(x) {
-#  stopifnot(is(x, "DRTraceSet"))
-#  slot(x, "DRProfiles")
-# }
 
 #' DRProfSet is a class for managing dose-response information about 
 #' cell lines from a pharmacogenomics dataset
@@ -154,7 +139,7 @@ setMethod("show", "DRTraceSet", function(object) {
 #' @export
 setMethod("plot", c("DRTraceSet", "missing"), function(x, y, ...) {
     df = .traceDF(x)  # defines cell_line, dose, response
-    ggplot(df, aes(x = log(dose), y = response, colour = cell_line)) + geom_line()
+    ggplot(df, aes(x = log(dose), y = response, colour = cell_line)) + geom_line() + ggtitle(paste(x@drug, x@dataset))
 })
 
 #' DRTraceSet constructor for multiple cell lines, single drug, single dataset
@@ -200,3 +185,29 @@ DRTraceSet = function(cell_lines = c("SK-ES-1", "TC-71", "MHH-ES-1", "HCC-56", "
 DRProfSet = function(cell_line = "MCF7", dataset = "CCLE") {
   try(lkc(cell_line=cell_line, dataset=dataset))
 }
+
+
+.profDF = function (drp) 
+{
+    ds = lapply(drp@DRProfiles, function(x) x@doses)
+    rs = lapply(drp@DRProfiles, function(x) x@responses)
+    cls = vapply(drp@DRProfiles, function(x) x@cell_line, character(1))
+    drgs = lapply(drp@DRProfiles, function(x) x@drug)
+    ns = vapply(ds, length, numeric(1))
+    cls = rep(cls, ns)
+    data.frame(dose = unlist(ds), response = unlist(rs), cell_line = cls, 
+        dataset = drp@dataset, drug = rep(unlist(drgs),ns))
+}
+
+#' @rdname DRProfSet
+#' @import ggplot2
+#' @param y for plot: not used
+#' @param \dots not used
+#' @export
+setMethod("plot", c("DRProfSet", "missing"), function(x,y, ...) {
+ .df = .profDF(x)
+ ggplot(.df, aes(x=log(dose), y=response, colour=drug)) + 
+   geom_line() + ggtitle(paste(x@cell_line, x@dataset))
+})
+
+

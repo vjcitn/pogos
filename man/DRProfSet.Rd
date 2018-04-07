@@ -8,12 +8,15 @@
 \alias{getDrugs}
 \alias{getDrugs,DRProfSet-method}
 \alias{DRProfSet}
+\alias{plot,DRProfSet,missing-method}
 \title{DRProfSet is a class for managing dose-response information about 
 cell lines from a pharmacogenomics dataset}
 \usage{
 getDrugs(x)
 
 DRProfSet(cell_line = "MCF7", dataset = "CCLE")
+
+\S4method{plot}{DRProfSet,missing}(x, y, ...)
 }
 \arguments{
 \item{x}{instance of DRProfSet}
@@ -21,6 +24,10 @@ DRProfSet(cell_line = "MCF7", dataset = "CCLE")
 \item{cell_line}{character(1) cell line name, entries in cell_lines_v1}
 
 \item{dataset}{character(1) resource name, entries in datasets_v1}
+
+\item{y}{for plot: not used}
+
+\item{\dots}{not used}
 }
 \value{
 getDrugs: character vector

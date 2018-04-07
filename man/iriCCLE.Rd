@@ -6,6 +6,9 @@
 \usage{
 iriCCLE()
 }
+\value{
+an instance of DRTraceSet
+}
 \description{
 obtain an example trace set stored locally, for irinotecan and selected cell lines
 }

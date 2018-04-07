@@ -9,6 +9,9 @@ traces(x)
 \arguments{
 \item{x}{instance of DRTraceSet}
 }
+\value{
+a list of DRProfile instances
+}
 \description{
 trace extractor
 }
