@@ -2,7 +2,7 @@ Package: pogos
 Title: PharmacOGenomics Ontology Support
 Description: Provide simple utilities for querying bhklab PharmacoDB, modeling 
 	API outputs, and integrating to cell and compound ontologies.
-Version: 1.3.0
+Version: 1.3.1
 Author: Vince Carey <stvjc@channing.harvard.edu>
 Suggests: knitr, DT, ontologyPlot, testthat
 Imports: methods, S4Vectors, utils, shiny, ontoProc, ggplot2,
@@ -12,6 +12,6 @@ Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 License: Artistic-2.0
 LazyLoad: yes
 LazyData: yes
-biocViews: Pharmacogenomics, PooledScreens
+biocViews: Pharmacogenomics, PooledScreens, ImmunoOncology
 RoxygenNote: 6.0.1.9000
 VignetteBuilder: knitr
