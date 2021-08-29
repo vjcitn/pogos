@@ -9,8 +9,11 @@
 \usage{
 \S4method{plot}{DRTraceSet,missing}(x, y, ...)
 
-DRTraceSet(cell_lines = c("SK-ES-1", "TC-71", "MHH-ES-1", "HCC-56",
-  "SK-HEP-1"), drug = "Irinotecan", dataset = "CCLE")
+DRTraceSet(
+  cell_lines = c("SK-ES-1", "TC-71", "MHH-ES-1", "HCC-56", "SK-HEP-1"),
+  drug = "Irinotecan",
+  dataset = "CCLE"
+)
 }
 \arguments{
 \item{x}{for plot: instance of DRTraceSet}

@@ -8,7 +8,17 @@
 \alias{datasets_v1}
 \alias{CCLE_drts}
 \title{compounds_v1: serialization of compounds info from PharmacoDb v1}
-\format{S4Vectors DataFrame instance}
+\format{
+S4Vectors DataFrame instance
+
+S4Vectors DataFrame instance
+
+S4Vectors DataFrame instance
+
+S4Vectors DataFrame instance
+
+DRTraceSet instance
+}
 \source{
 PharmacoDb Sept 2017
 

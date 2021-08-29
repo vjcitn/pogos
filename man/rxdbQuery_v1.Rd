@@ -4,8 +4,11 @@
 \alias{rxdbQuery_v1}
 \title{very simple query formulation, build queries using endpoints of bhklab PharmacoDB API}
 \usage{
-rxdbQuery_v1(..., url = "https://pharmacodb.pmgenomics.ca/api/v1/",
-  decoder = basicDecoder)
+rxdbQuery_v1(
+  ...,
+  url = "https://pharmacodb.pmgenomics.ca/api/v1/",
+  decoder = basicDecoder
+)
 }
 \arguments{
 \item{\dots}{typically a string representing an API endpoint, will be processed by unlist() and then to paste0 preceded by \code{url}}
