@@ -53,7 +53,7 @@ setMethod("getDrugs", "DRProfSet",
 #' @param drop logical(1) not used
 #' @return a DRProfSet instance restricted to experiments involving the selected drug
 #' @export
-setMethod("[", c("DRProfSet", "character"), 
+setMethod("[", c("DRProfSet", "character", "ANY"), 
     function(x, i, j, ..., drop = TRUE) {
       ind = match(i, getDrugs(x))
       if (length(ind) == 0) 

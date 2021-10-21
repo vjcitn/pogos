@@ -7,7 +7,6 @@
 \alias{DRProfSet}
 \alias{getDrugs}
 \alias{getDrugs,DRProfSet-method}
-\alias{DRProfSet}
 \alias{plot,DRProfSet,missing-method}
 \title{DRProfSet is a class for managing dose-response information about 
 cell lines from a pharmacogenomics dataset}
