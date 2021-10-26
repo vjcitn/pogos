@@ -2,7 +2,7 @@ Package: pogos
 Title: PharmacOGenomics Ontology Support
 Description: Provide simple utilities for querying bhklab PharmacoDB, modeling 
 	API outputs, and integrating to cell and compound ontologies.
-Version: 1.13.2
+Version: 1.14.0
 Author: Vince Carey <stvjc@channing.harvard.edu>
 Suggests: 
     knitr,
