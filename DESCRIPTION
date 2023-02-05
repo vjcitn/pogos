@@ -20,3 +20,5 @@ LazyData: yes
 biocViews: Pharmacogenomics, PooledScreens, ImmunoOncology
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
+URL: https://github.com/vjcitn/pogos
+BugReports: https://github.com/vjcitn/pogos/issues

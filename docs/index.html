@@ -68,127 +68,19 @@
   <div class="contents col-md-9">
 
 <div class="section level1">
-<div class="page-header"><h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<div class="page-header"><h1 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h1></div>
-<p>bhklab’s PharmacoDB unites multiple drug sensitivity databases. A REST API is available and interfaces to some basic endpoints are provided in this package. We also provide some basic support for working with the Cell Line Ontology and ChEBI.</p>
+<p><a href="https://pharmacodb.ca" class="external-link">PharmacoDB</a> unites multiple drug sensitivity databases. A REST API is available and interfaces to some basic endpoints are provided in this package. We also provide some basic support for working with the Cell Line Ontology and ChEBI.</p>
 <p>A basic purpose of this package is to support exploration of the completeness and utility of available ontologies for cell lines and drugs. A relevant study of the possibility of “drug set enrichment analysis” has been published by <a href="https://www.ncbi.nlm.nih.gov/pubmed/26415724" class="external-link">Napolitano and colleagues</a>.</p>
 <p>We note that detailed RESTful interrogation of many ontologies is supported by the <code>r Biocpkg("rols")</code> package. In the long run we would like to make use of the EBI Ontology Lookup System as a central resource of this package, but to develop concepts at these early stages, static images of ontologies are employed.</p>
-<p><code>{r setup,echo=FALSE} suppressMessages({ suppressPackageStartupMessages({ library(pogos) library(S4Vectors) library(DT) library(ggplot2) }) })</code></p>
 </div>
 <div class="section level1">
-<h1 id="basic-software-design-for-pogos">Basic software design for pogos<a class="anchor" aria-label="anchor" href="#basic-software-design-for-pogos"></a>
+<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h1>
-<p>This package attacks two problems: organization of data on cell-line response to treatments by diverse compounds, and communication with PharmacoDb.</p>
-<div class="section level2">
-<h2 id="data-structures-for-pharmacogenomics">Data structures for pharmacogenomics<a class="anchor" aria-label="anchor" href="#data-structures-for-pharmacogenomics"></a>
-</h2>
-<p>This package provides two key data structures for managing pharmacogenomic experimental results</p>
-<ul>
-<li>
-<code>DRTraceSet</code>: for a given dosage schedule for a given compound, manage the dose-response profiles for a number of cell lines. An example is <code>{r lkcc} iric = iriCCLE() iric</code>
-</li>
-<li>
-<code>DRProfSet</code>: for a given cell line, provide the dose-response profiles for a number of compounds. Example: <code>{r lkdrp} drp = DRProfSet() drp</code>
-</li>
-</ul>
-<p>The <code>plot</code> method reveals a basic motivation for <code>DRTraceSet</code>. <code>{r lkpl090, fig.height=2.5} plot(iric)</code></p>
-<p>The plot method for DRProfSet has a complementary purpose. <code>{r lklll,fig.height=3.5} plot(drp)</code></p>
-</div>
-<div class="section level2">
-<h2 id="interrogating-pharmacodb">Interrogating PharmacoDb<a class="anchor" aria-label="anchor" href="#interrogating-pharmacodb"></a>
-</h2>
-<p>The communications part of the package is somewhat fragile, as changes to the upstream service at Princess Margaret can lead to failures here.</p>
-<p>The heart of the query facility is shown here, unevaluated. The <code>datasetCodes</code> and <code>cellLineCodes</code> are extracted from reference data that may itself go out of date.</p>
-<pre><code><span>    <span class="va">xx</span> <span class="op">=</span> <span class="fu">GET</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/%d/%d?indent=true"</span>, </span>
-<span>        <span class="va">cellLineCodes</span><span class="op">[</span><span class="va">cell_line</span><span class="op">]</span>, <span class="va">datasetCodes</span><span class="op">[</span><span class="va">dataset</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">ans</span> <span class="op">=</span> <span class="fu">fromJSON</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">xx</span><span class="op">$</span><span class="va">content</span>, what <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">ans</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">ans</span>, <span class="kw">function</span><span class="op">(</span><span class="va">comb</span><span class="op">)</span> <span class="op">{</span></span>
-<span>        <span class="fu">new</span><span class="op">(</span><span class="st">"DRProfile"</span>, cell_line <span class="op">=</span> <span class="va">cell_line</span>, dataset <span class="op">=</span> <span class="va">dataset</span>, </span>
-<span>            drug <span class="op">=</span> <span class="va">comb</span><span class="op">$</span><span class="va">compound</span><span class="op">$</span><span class="va">name</span>, drug_code <span class="op">=</span> <span class="va">comb</span><span class="op">$</span><span class="va">compound</span><span class="op">$</span><span class="va">id</span>, </span>
-<span>            cell_line_code <span class="op">=</span> <span class="va">comb</span><span class="op">$</span><span class="va">cell_line</span><span class="op">$</span><span class="va">id</span>, doses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">comb</span><span class="op">$</span><span class="va">dose_responses</span>, </span>
-<span>                <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">dose</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>, responses <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">comb</span><span class="op">$</span><span class="va">dose_responses</span>, </span>
-<span>                <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">response</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="op">}</span><span class="op">)</span></span></code></pre>
-</div>
-</div>
-<div class="section level1">
-<h1 id="some-stored-reference-data">Some stored reference data<a class="anchor" aria-label="anchor" href="#some-stored-reference-data"></a>
-</h1>
-<p>We precomputed tables for cell lines, compounds, and tissues. These are available as DataFrame instances as <code>cell_lines_v1</code>, <code>compounds_v1</code>, <code>datasets_v1</code>, and <code>tissues_v1</code>, in the data element of the package.</p>
-<p>Numerical ids are defined by the PharmacoDB.</p>
-<div class="section level2">
-<h2 id="cell-lines">Cell lines<a class="anchor" aria-label="anchor" href="#cell-lines"></a>
-</h2>
-<p><code>{r lkk, echo=FALSE} data(cell_lines_v1) datatable(as.data.frame(cell_lines_v1), options=list(lengthMenu=c(3,5,10,50,100)))</code></p>
-</div>
-<div class="section level2">
-<h2 id="compounds">Compounds<a class="anchor" aria-label="anchor" href="#compounds"></a>
-</h2>
-<p><code>{r lkccc, echo=FALSE} data(compounds_v1) datatable(as.data.frame(compounds_v1),     options=list(lengthMenu=c(3,5,10,50,100)))</code></p>
-</div>
-<div class="section level2">
-<h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
-</h2>
-<p><code>{r lkccc2, echo=FALSE} data(datasets_v1) datatable(as.data.frame(datasets_v1))</code></p>
-</div>
-<div class="section level2">
-<h2 id="coverage-of-pharmacogenomic-compound-names-by-chebi">Coverage of pharmacogenomic compound names by ChEBI<a class="anchor" aria-label="anchor" href="#coverage-of-pharmacogenomic-compound-names-by-chebi"></a>
-</h2>
-<p>As an illustration of long-term intention of this package, consider the following snapshot of a slice of ChEBI.</p>
-<p><code>{r doch,fig=TRUE} library(ontoProc) cc = getChebiOnto() library(ontologyPlot) onto_plot(cc,    c("CHEBI:134109", "CHEBI:61115", "CHEBI:75603", "CHEBI:37699",         "CHEBI:68481", "CHEBI:71178"), fontsize=24, shape="rect")</code> It is natural to map the compounds studied in pharmacogenomics to these compound classes as a step towards understanding common and distinct mechanisms of action. But in the following display, we see that some common chemotherapeutic agents are characterized in very generic terms:</p>
-<p><code>{r lkmo, fig=TRUE} onto_plot(cc, c("CHEBI:134109", "CHEBI:61115", "CHEBI:75603", "CHEBI:37699",     "CHEBI:68481", "CHEBI:71178", "CHEBI:52172", "CHEBI:64310",     "CHEBI:63632", "CHEBI:45863"), fontsize=28, shape="rect")</code></p>
-<p>Should paclitaxel be identified as an “organic molecular entity” with no additional detail? Is there additional information in ChEBI or related ontologies to help organize information on related compounds?</p>
-</div>
-<div class="section level2">
-<h2 id="relationships-among-cell-lines">Relationships among cell lines<a class="anchor" aria-label="anchor" href="#relationships-among-cell-lines"></a>
-</h2>
-<p>Cell line nomenclature is often unnatural. The Cell Line Ontology should be helpful in systematizing cell lines used in pharmacogenomics. Nevertheless there is some apparent lack of consistency.</p>
-<p><code>{r ana,fig=TRUE} clo = getCellLineOnto() smoc = c("CLO:0000517", "CLO:0000560", "CLO:0000563", "CLO:0001072",  "CLO:0001088", "CLO:0001138", "CLO:0007606") onto_plot(clo, smoc)</code></p>
-<p>The MCF7 line should probably be annotated as related to human mammary tissue.</p>
-</div>
-</div>
-<div class="section level1">
-<h1 id="working-with-specific-elements">Working with specific elements<a class="anchor" aria-label="anchor" href="#working-with-specific-elements"></a>
-</h1>
-<p>We want to maximize utility of institutionally curated terminology for components of pharmacodb.</p>
-<div class="section level2">
-<h2 id="cell-line-identifiers">Cell line identifiers<a class="anchor" aria-label="anchor" href="#cell-line-identifiers"></a>
-</h2>
-<div class="section level3">
-<h3 id="bridging-to-cell-line-ontology">Bridging to Cell Line Ontology<a class="anchor" aria-label="anchor" href="#bridging-to-cell-line-ontology"></a>
-</h3>
-<p>The following identifiers are available in the PharmacoDB cell lines:</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"143B"</span>, <span class="st">"1321N1"</span>, <span class="st">"184B5"</span><span class="op">)</span></span></code></pre>
-<p>What are they? What organs do they represent? One way to proceed is through parent terms in Cell Line Ontology. <code>{r lkoo} library(ontoProc) clo = getCellLineOnto() minds = which(clo$name %in% c("143B cell", "1321N1 cell", "184B5 cell")) tags = clo$id[minds] clo$name[ unlist(clo$parent[tags]) ]</code> TODO: how can we connect the anatomic vocabulary in these terms to formal anatomical terms in UBERON or CARO?</p>
-</div>
-<div class="section level3">
-<h3 id="vocabularies-of-anatomy">Vocabularies of anatomy<a class="anchor" aria-label="anchor" href="#vocabularies-of-anatomy"></a>
-</h3>
-<p>The Experimental Factor Ontology unifies various ontologies and includes terms related to anatomic systems. At least with the infrastructure available in <code>r CRANpkg("ontologyIndex")</code> and <code>r CRANpkg("ontologyPlot")</code>, it seems there are opportunities to add meaningful connections.</p>
-<p><code>{r lkefo, fig=TRUE} ee = getEFOOnto() onto_plot(ee, c("UBERON:0000474", "UBERON:0000079",    "UBERON:0000990", "UBERON:0000995", "UBERON:0003982",    "UBERON:0000310", "UBERON:0002107", "UBERON:0001264",    "UBERON:0002113", "UBERON:0001007", "UBERON:0002530",    "UBERON:6007435", "UBERON:0004122", "UBERON:0001008"))</code></p>
-<p>It is likely important to remember the distinction between an ontology, a structured collection of concept terms, and a curated vocabulary or ontology annotation, which covers concept “instances”.</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="compounds-1">Compounds<a class="anchor" aria-label="anchor" href="#compounds-1"></a>
-</h2>
-<div class="section level3">
-<h3 id="bridging-to-chebi">Bridging to ChEBI<a class="anchor" aria-label="anchor" href="#bridging-to-chebi"></a>
-</h3>
-<p>This will involve more work. We have the compounds in PharmacoDB. How many match the compound names in Chebi? <code>{r lkcom} chl = getChebiOnto() allch = chl$name mm = allch[match(tolower(compounds_v1[,2]), tolower(allch), nomatch=0)] round(length(mm)/nrow(compounds_v1),2) # not high datatable(data.frame(id=names(mm), comp=as.character(mm)))</code></p>
-<p>Direct matches are relatively rare. Attempts to use approximate matching with agrep have so far been unproductive. As an example, which we do not run:</p>
-<p><code>{r srchsym, eval=FALSE} notin = setdiff(compounds_v1$name, mm) library(parallel) options(mc.cores=2) allch = tolower(allch) notin = tolower(notin) lk50 = mclapply(notin[1:50], function(x) { cat(x);        order(adist(x, allch))[1:5]}) names(lk50) = notin[1:50] aa = do.call(cbind, lk50[1:50]) ttt = t(apply(aa,2,function(x) allch[x])[1:3,])</code></p>
-</div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="retrieving-dose-response-data-for-cell-linecompound-intersections">Retrieving dose-response data for cell-line/compound intersections<a class="anchor" aria-label="anchor" href="#retrieving-dose-response-data-for-cell-linecompound-intersections"></a>
-</h1>
-<p>Given a cell-line code and a database, we can retrieve all the experiments associated with it in that database.</p>
-<p>CCLE for MCF-7: <code>{r lkcomb,cache=TRUE} library(rjson) library(httr) xx = GET("https://pharmacodb.pmgenomics.ca/api/v1/intersections/2/895/1?indent=true") ans = fromJSON(readBin(xx$content, what="character")) doses1 = sapply(ans[[1]]$dose_responses, function(x) x[[1]]) resp1 =  sapply(ans[[1]]$dose_responses, function(x) x[[2]])</code></p>
-<p>The <code>compoundsByCell</code> function employs this pattern to establish lists of experiments per cell type.</p>
-<p>We can recreate (approximately: the dose and response units need to be clarified) Figure 4b from Barretina et al. 2012 as follows (defaults to DRTraceSet are specifically chosen to compute this figure):</p>
-<p><code>{r lkbar, fig=TRUE} library(ggplot2) plot(DRTraceSet(dataset="CCLE"))</code></p>
+<p>pogos can be installed using Bioconductor. Be sure BiocManager has been installed from CRAN. Then:</p>
+<pre><code><span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"pogos"</span><span class="op">)</span></span></code></pre>
+<p>will take care of all dependencies.</p>
+<p>Use the “Get started” tab above to learn more.</p>
 </div>
 
   </div>
